@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linear Clone</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="auth">
+  
+  <div id="auth-view" class="auth-view">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <span data-lucide="git-branch-plus"></span>
+        <span>Linear Clone</span>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-mode="login">Log in</button>
+        <button class="auth-tab" data-mode="register">Sign up</button>
+      </div>
+
+      <form id="auth-form" class="auth-form">
+        <div class="field" id="name-field" style="display:none;">
+          <label>Name</label>
+          <input type="text" id="auth-name" placeholder="Ada Lovelace" autocomplete="name" />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="auth-email" placeholder="you@example.com" autocomplete="email" required />
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password" required />
+        </div>
+        <div class="auth-error" id="auth-error"></div>
+        <button type="submit" class="btn btn-primary btn-block" id="auth-submit">Log in</button>
+      </form>
+    </div>
+    <p class="auth-foot">A minimal Linear-style issue tracker</p>
+  </div>
+
+  
+  <div id="app-view" class="app-view">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <main class="content" id="content">
+      <header class="content-header" id="content-header"></header>
+      <div class="content-body" id="content-body"></div>
+    </main>
+  </div>
+
+  
+  <div class="panel-overlay" id="panel-overlay"></div>
+  <aside class="slide-panel" id="slide-panel"></aside>
+
+  
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="modal"></div>
+  </div>
+
+  
+  <div class="toast" id="toast"></div>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/sidebar.js"></script>
+  <script src="/js/team.js"></script>
+  <script src="/js/issues.js"></script>
+</body>
+</html>

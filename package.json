@@ -1,0 +1,18 @@
+{
+  "name": "linear-clone",
+  "version": "1.0.0",
+  "description": "A Linear-style issue tracker built with HTML + Express + SQLite",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "reset-db": "node scripts/reset-db.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "bcryptjs": "^2.4.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
