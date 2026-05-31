@@ -1,8 +1,72 @@
 # Linear Clone
 
-A small, self-hosted issue tracker inspired by Linear. No React, no build step — just Express, SQLite, and vanilla JavaScript in the browser.
+A small, self-hosted issue tracker inspired by [Linear](https://linear.app). No React, no build step — just Express, SQLite, and vanilla JavaScript in the browser.
 
-The idea is to keep things simple enough to read in an afternoon, but real enough to actually track work: teams, issues with statuses and priorities, labels, comments, and basic member management.
+## Purpose
+
+This project exists as a **readable, self-hosted alternative** to heavyweight issue trackers. It captures the core workflow of Linear — teams, issues, statuses, priorities, labels, and comments — without the complexity of a modern frontend framework or a distributed backend.
+
+The goal is twofold:
+
+- **Learn by reading.** The entire codebase is small enough to understand in an afternoon. Every layer (server, database, auth, UI) is explicit and easy to trace.
+- **Use for real work.** Despite its size, the app is functional enough to track actual tasks for a solo developer or a small team.
+
+It is intentionally not a production-grade Linear replacement. It is a learning project and a lightweight tool you can run on your own machine or a small VPS.
+
+## Technology
+
+| Layer | Choice | Why |
+|-------|--------|-----|
+| Server | Express 4 | Straightforward routing, JSON APIs, static file serving |
+| Database | SQLite via `better-sqlite3` | Zero config, synchronous queries, fine for a single-user or small-team app |
+| Auth | JWT + bcrypt | Stateless tokens in `localStorage`, passwords hashed with bcrypt |
+| Frontend | Plain HTML/CSS/JS | One page, client-side rendering, no bundler |
+
+Icons come from [Lucide](https://lucide.dev/) loaded from a CDN. Docker support is included via `Dockerfile` and `docker-compose.yml` for easy deployment.
+
+## Objectives
+
+- **Minimal dependencies.** Only four npm packages on the server side — no ORM, no build toolchain, no frontend framework.
+- **Team-based issue tracking.** Users belong to teams; each team has its own issue counter, labels, and members with owner/member roles.
+- **Full issue lifecycle.** Create, filter, assign, prioritize, label, comment on, and delete issues across six statuses and five priority levels.
+- **Simple auth flow.** Register, log in, and stay signed in with JWT tokens. Registration automatically creates a default team.
+- **Idempotent setup.** Database tables are created on startup; no separate migration step required.
+- **Easy to extend.** A small, flat codebase makes it straightforward to add features like search, webhooks, or email invites without untangling layers of abstraction.
+
+## Project structure
+
+```
+linear_clone/
+├── server.js              # Express entry point — mounts routes, serves static files
+├── middleware/
+│   └── auth.js            # JWT verification (`requireAuth`)
+├── routes/
+│   ├── auth.js            # Register, login, profile, delete account
+│   ├── team.js            # Teams, members, labels
+│   └── issues.js          # Issues, labels on issues, comments
+├── db/
+│   ├── database.js        # Schema creation + SQLite connection
+│   ├── helpers.js         # Team creation, membership checks
+│   └── data.db            # SQLite database (created at runtime)
+├── public/
+│   ├── index.html         # Single-page shell (auth + main app)
+│   ├── css/
+│   │   └── styles.css     # All styles
+│   └── js/
+│       ├── main.js        # Auth, global state, shared helpers
+│       ├── sidebar.js     # Team switcher, nav, filters
+│       ├── issues.js      # Issue list + detail panel
+│       └── team.js        # Team settings, members
+├── scripts/
+│   └── reset-db.js        # Delete db files and re-run schema
+├── Dockerfile             # Container image definition
+├── docker-compose.yml     # One-command Docker deployment
+└── package.json           # Dependencies and npm scripts
+```
+
+On startup, `database.js` creates all tables if they don't exist. The SQLite file lands at `db/data.db` by default (configurable via `DB_PATH`), with WAL mode and foreign keys enabled.
+
+The frontend is a single HTML page with two modes: an auth screen and the main app. JavaScript modules share a global `State` object (current user, teams, active team, filters). Views re-render by swapping inner HTML — no virtual DOM, no framework.
 
 ## Quick start
 
@@ -20,45 +84,6 @@ npm run reset-db
 ```
 
 Stop the server first if you get a "file is busy" error — SQLite keeps the file open while the app is running.
-
-## Stack
-
-| Layer | Choice | Why |
-|-------|--------|-----|
-| Server | Express 4 | Straightforward routing, JSON APIs, static file serving |
-| Database | SQLite via `better-sqlite3` | Zero config, synchronous queries, fine for a single-user or small-team app |
-| Auth | JWT + bcrypt | Stateless tokens in `localStorage`, passwords hashed with bcrypt |
-| Frontend | Plain HTML/CSS/JS | One page, client-side rendering, no bundler |
-
-Icons come from [Lucide](https://lucide.dev/) loaded from a CDN.
-
-## How it's put together
-
-```
-linear_clone/
-├── server.js              # Express entry point
-├── middleware/auth.js     # JWT verification
-├── routes/
-│   ├── auth.js            # Register, login, profile, delete account
-│   ├── team.js            # Teams, members, labels
-│   └── issues.js          # Issues, labels on issues, comments
-├── db/
-│   ├── database.js        # Schema creation + db connection
-│   └── helpers.js         # Team creation, membership checks
-├── public/
-│   ├── index.html         # Single-page shell
-│   ├── css/styles.css
-│   └── js/
-│       ├── main.js        # Auth, state, shared helpers
-│       ├── sidebar.js     # Team switcher, nav, filters
-│       ├── issues.js      # Issue list + detail panel
-│       └── team.js        # Team settings, members
-└── scripts/reset-db.js    # Delete db files and re-run migrations
-```
-
-On startup, `database.js` creates all tables if they don't exist (idempotent migrations). The SQLite file lands at `db/data.db` by default, with WAL mode and foreign keys enabled.
-
-The frontend is a single HTML page with two modes: an auth screen and the main app. JavaScript modules share a global `State` object (current user, teams, active team, filters). Views re-render by swapping inner HTML — no virtual DOM, no framework.
 
 ## Authentication
 
